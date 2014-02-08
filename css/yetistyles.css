@@ -1,0 +1,43 @@
+
+.yetislider {
+	position: relative;
+	display: inline-block;
+	overflow: hidden;
+	width: 0;
+	height: 0;
+}
+
+.yetislider img {
+	float: left;
+}
+
+
+#prevBtn {
+	position: fixed;
+	display: block;
+	left: 0;
+	height: 400px;
+	width: 100px;
+	padding: 0;
+	color: white;
+	text-indent: -9999px;
+	background: url('https://cdn1.iconfinder.com/data/icons/black-logistics-icons/256/Rounded_shift_left_arrow.png') center center no-repeat;
+	background-size:50px 50px;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+#nextBtn {
+	position: fixed;
+	display: block;
+	left: 0;
+	height: 400px;
+	width: 100px;
+	padding: 0;
+	color: white;
+	text-indent: -9999px;
+	background: url('https://cdn1.iconfinder.com/data/icons/black-logistics-icons/256/Rounded_shift_right_arrow.png') center center no-repeat;
+	background-size:50px 50px;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
