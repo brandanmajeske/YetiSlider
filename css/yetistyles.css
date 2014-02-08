@@ -7,37 +7,51 @@
 	height: 0;
 }
 
+.yeti-wrapper {
+	position: absolute;
+}
+
 .yetislider img {
 	float: left;
 }
 
+.yetislider .controls {
+	position: absolute;
+	top: -3em;
+	width: 100%;
+	z-index: 300;
+}
 
 #prevBtn {
-	position: fixed;
+	position: absolute;
 	display: block;
-	left: 0;
-	height: 400px;
-	width: 100px;
+	left: .5em;
+	top: 0;
+	width: 50px;
+	height: 50px;
 	padding: 0;
 	color: white;
 	text-indent: -9999px;
 	background: url('https://cdn1.iconfinder.com/data/icons/black-logistics-icons/256/Rounded_shift_left_arrow.png') center center no-repeat;
 	background-size:50px 50px;
-	opacity: 0;
+	opacity: 1;
 	transition: opacity 0.3s ease;
+	
 }
 
 #nextBtn {
-	position: fixed;
+	position: absolute;
 	display: block;
-	left: 0;
-	height: 400px;
-	width: 100px;
+	right: .5em;
+	top: 0;
+	width: 50px;
+	height: 50px;
 	padding: 0;
 	color: white;
 	text-indent: -9999px;
 	background: url('https://cdn1.iconfinder.com/data/icons/black-logistics-icons/256/Rounded_shift_right_arrow.png') center center no-repeat;
 	background-size:50px 50px;
-	opacity: 0;
+	opacity: 1;
 	transition: opacity 0.3s ease;
+	
 }

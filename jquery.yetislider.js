@@ -8,16 +8,15 @@
  
 	$.fn.yetislider = function(options){
 
-		 // Bob's default settings:
+		// Default Settings
 	    var defaults = {
 			'autoscroll': true,
+			'touch': true,
 			'fade': false,
 			'speed': 'super-slow' // fast, medium, slow, default is super-slow
 	    };
 	    // extend options with the default settings
 	    var options = $.extend( {}, defaults, options );
-
-
 
 		// add yetislider css to the head
 		var link = document.createElement('link');
@@ -49,24 +48,24 @@
   				
   				viewer.css({'height': biggestHeight, 'width': biggestWidth});
 
-  				viewer.prepend('<div class="yeti-wrapper"/>');
+  				viewer.append('<div class="yeti-wrapper"/>');
   				viewerWrapper = $('.yeti-wrapper');
   				viewerWrapper.css({'width': (biggestWidth * images.length)});
   				images.appendTo(viewerWrapper);
 
 
   				
-  				var prev = '<a href="#" id="prevBtn">Prev</a>';
+/*  				var prev = '<a href="#" id="prevBtn">Prev</a>';
   				var next = '<a href="#" id="nextBtn">Next</a>';
   				var position = viewer.position();
-  				var posRight = biggestWidth - 85;
-  				
-  				viewer.prepend(prev);
-				viewer.prepend(next);
+  				var posRight = biggestWidth - 85;*/
+/*  				
+  				viewerWrapper.prepend(prev);
+				viewerWrapper.prepend(next);*/
 
 				var prevBtn = $('#prevBtn');
 				var nextBtn = $('#nextBtn');
-				nextBtn.css({'left':posRight});
+				//nextBtn.css({'left':posRight});
 
 				var leftPos = viewer.scrollLeft();
 				
@@ -106,7 +105,7 @@
 					} 
 				});
 
-				// ** Autoscroll controls
+				// ** Autoscroll controls ** //
 
 				if(options.autoscroll === true){
 
@@ -173,9 +172,70 @@
 
 					});
 
-				}
+				} // End Auto Scroll
+
+				// ** Touch Events ** //
+
+				if(options.touch === true){
 				
-			});
+					var touchMe = $('.touchme'),
+						direction = null;
+
+					touchMe.css({'display':'block', 'height': '2em', 'background-color':'pink'});
+
+					viewer.on('touchstart', function(e){
+						e.preventDefault();
+						lastPosition = e.originalEvent.touches[0].pageX;
+						touchMe.html(lastPosition);
+					});
+
+					viewer.on('touchmove', function(e){
+						e.preventDefault();
+						currentPosition = e.originalEvent.touches[0].pageX;
+
+
+						// Depending on direction of swipe, move slide position
+						if(currentPosition < lastPosition){
+
+							direction = 'right';
+							touchMe.html('right');
+
+						} else {
+
+							direction = 'left';
+							touchMe.html('left');
+						}
+						lastPosition = currentPosition;
+						if(options.autoscroll){
+							clearInterval(timer);
+						}	
+					});
+
+					viewer.on('touchend', function(e){
+						e.preventDefault();
+
+						if(direction === 'right'){
+							viewer.animate({scrollLeft: leftPos + biggestWidth}, 400);
+							leftPos += biggestWidth;
+						}
+
+						if(direction === 'left'){
+							// Move Left 
+							viewer.animate({scrollLeft: leftPos - biggestWidth}, 400);
+							
+							if(leftPos > 0){
+								leftPos -= biggestWidth;
+							}
+						}
+
+						if(options.autoscroll === true){
+							timer = setInterval(autoScrollStart, speed);
+						}
+					});
+
+				} // end Touch
+				
+			}); // Window Load
 
 		})();
 
