@@ -83,7 +83,7 @@
 
 				// Ideally the images should be the same height and width
 				
-				(function sizeUp(){
+				var sizeUp = (function(){
 
 					$.each(images, function(index, image){
        				
@@ -109,7 +109,6 @@
   				viewerWrapper.css({'width': (biggestWidth * images.length)});
  				images.appendTo(viewerWrapper);
 
-
    			 	})();
 
    			 		
@@ -122,10 +121,37 @@
 
 				var prevBtn = $('#prevBtn');
 				var nextBtn = $('#nextBtn');
-				//nextBtn.css({'left':posRight});
-
 				var leftPos = viewer.scrollLeft();
 				
+				//Resize Responsively
+
+   			 	$(window).resize(function(){
+
+   			 			$.each(images, function(index, image){
+   							
+   							viewerWidth = viewer.width();
+   							viewerHeight = image.height; 
+   							viewerParentWidth = viewer.parent().width();
+   							image.width = viewerWidth;
+   							
+
+   							console.log('Image Width: ' + image.width);
+   							console.log('Viewer Width: ' + viewerWidth);
+   							console.log('Viewer Height: ' + viewerHeight);
+   							console.log('Viewer Parent: ' + viewer.parent().width());
+   							
+   							biggestWidth = image.width;
+   							biggestHeight = image.height;
+							
+   			 			});
+   			 			
+   			 			viewer.css({'height': biggestHeight, 'width': viewerParentWidth});
+   			 			viewerControls.css({'top': (biggestHeight/2)-25});
+
+   			 			console.log(biggestWidth);
+
+ 						
+   			 	});
 
 				// set up controls for previous button
 				prevBtn.on('click', function(e){

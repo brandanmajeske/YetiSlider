@@ -4,12 +4,9 @@
 	display: block;
 	overflow: hidden;
 	width: 100%;
+	max-width: 100%;
 	height: 0;
 	scroll: none;
-}
-
-.yeti-wrapper{
-	width: 100%;
 }
 
 .yeti-controls {
