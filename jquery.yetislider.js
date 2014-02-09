@@ -20,13 +20,14 @@
 
 		// add yetislider css to the head
 		var link = document.createElement('link');
-		link.type = 'text/css';
-		link.rel = 'stylesheet';
-		link.href = 'css/yetistyles.css';    
-		document.getElementsByTagName('head')[0].appendChild(link);
+			link.type = 'text/css';
+			link.rel = 'stylesheet';
+			link.href = 'css/yetistyles.css';    
+			document.getElementsByTagName('head')[0].appendChild(link);
 
 		//set size of the slider viewer
 		var viewer = $('.yetislider'),
+			viewerWidth = viewer.width(),
 			images = viewer.find('img'),
 			height = [],
 			width = [],
@@ -38,30 +39,36 @@
 			//wait for images to finish loading
 			$(window).load(function(){
 
+				// Ideally the images should be the same height and width
 				$.each(images, function(index, image){
+       				
+					if(image.width > viewerWidth){
+  						image.width = viewerWidth;
+  					}
        				height.push(image.height);
        				width.push(image.width);
    			 	});
-   			 	
+
+
    			 	biggestWidth = Math.max.apply(null, width);
    			 	biggestHeight = Math.max.apply(null, height);
-  				
-  				viewer.css({'height': biggestHeight, 'width': biggestWidth});
+  			
 
+  				viewer.css({'height': biggestHeight, 'width': biggestWidth});
   				viewer.append('<div class="yeti-wrapper"/>');
   				viewerWrapper = $('.yeti-wrapper');
+  				viewerControls = $('.yeti-controls');
   				viewerWrapper.css({'width': (biggestWidth * images.length)});
-  				images.appendTo(viewerWrapper);
+ 				images.appendTo(viewerWrapper);
 
 
   				
-/*  				var prev = '<a href="#" id="prevBtn">Prev</a>';
-  				var next = '<a href="#" id="nextBtn">Next</a>';
-  				var position = viewer.position();
-  				var posRight = biggestWidth - 85;*/
-/*  				
-  				viewerWrapper.prepend(prev);
-				viewerWrapper.prepend(next);*/
+  				var prev = '<a href="#" class="yeti-controlBtn" id="prevBtn"></a>',
+	  				next = '<a href="#" class="yeti-controlBtn" id="nextBtn"></a>';
+					$(prev).appendTo(viewerControls);
+					$(next).appendTo(viewerControls);
+					viewerControls.css({'top': (biggestHeight/2) + 25});
+
 
 				var prevBtn = $('#prevBtn');
 				var nextBtn = $('#nextBtn');
@@ -72,9 +79,14 @@
 
 				// set up controls for previous button
 				prevBtn.on('click', function(e){
+
+					if(leftPos === 0) {
+						return false;
+					}
+
 					e.preventDefault();
 					
-					viewer.animate({scrollLeft: leftPos - biggestWidth}, 400);
+					viewer.animate({scrollLeft: leftPos - biggestWidth}, 200);
 					if(leftPos > 0){
 						leftPos -= biggestWidth;
 						if(leftPos === 0){
@@ -85,16 +97,28 @@
 					if(leftPos <= viewerWrapper.width() - biggestWidth){
 						nextBtn.css({'opacity': 1, 'cursor': 'auto'});
 					}
-					
+						
+					// if Fade option is true
+					if(options.fade === true){	
+						viewerWrapper.stop().animate({'opacity':0},0).animate({'opacity':1},1800);
+					}
+
 				});
 				
 				// set up controlers for next btn
 				nextBtn.on('click', function(e){
 					e.preventDefault();
 					
-					viewer.animate({scrollLeft: leftPos + biggestWidth}, 400);
-					leftPos += biggestWidth;
-					
+					viewer.animate({scrollLeft: leftPos + biggestWidth}, 200);
+					if(leftPos != viewerWrapper.width() - biggestWidth){
+						leftPos += biggestWidth;
+						console.log(leftPos);
+					} else {
+						console.log('no more pics foo!');
+						return false;
+					}
+
+
 					if(leftPos >= biggestWidth){
 						prevBtn.css({'opacity': 1, 'cursor': 'auto'});
 					}
@@ -102,7 +126,15 @@
 					if(leftPos >= viewerWrapper.width() - biggestWidth){
 						
 						nextBtn.css({'opacity': 0.5, 'cursor': 'not-allowed'});
-					} 
+
+					}
+
+					// if Fade option is true
+					if(options.fade === true){
+						if(leftPos != viewerWrapper.width()){
+							viewerWrapper.stop().animate({'opacity':0},0).animate({'opacity':1},1800);
+						} 
+					}
 				});
 
 				// ** Autoscroll controls ** //
@@ -166,12 +198,35 @@
 
 					}, function(){
 					// restart the timer, calling autoscroll at an interval
-					    	timer = setInterval(autoScrollStart, speed);
+					    	timer = setInterval(autoScrollStart, speed);		
 					    	prevBtn.css({'opacity': 0});
 							nextBtn.css({'opacity': 0});
-
 					});
 
+					$('.yeti-controlBtn').hover(function(){
+							// check position of slides, if no previous slides available, disable prev btn
+							if(leftPos === 0){
+								prevBtn.css({'opacity': 0.5, 'cursor': 'not-allowed'});
+							} else {
+								prevBtn.css({'opacity': 1, 'cursor': 'auto'});
+							}
+							
+							// Check position of the slides, disable the nextBtn if no new slides available
+							if(leftPos >= viewerWrapper.width() - biggestWidth){
+						
+							nextBtn.css({'opacity': 0.5, 'cursor': 'not-allowed'});
+							} else {
+								nextBtn.css({'opacity': 1});
+							}
+							clearInterval(timer);
+							
+						console.log('over the buttons');
+					}, function(){
+						prevBtn.css({'opacity': 0});
+						nextBtn.css({'opacity': 0});
+						timer = setInterval(autoScrollStart, speed);
+					});
+					    		
 				} // End Auto Scroll
 
 				// ** Touch Events ** //

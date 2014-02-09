@@ -1,57 +1,58 @@
 
 .yetislider {
 	position: relative;
-	display: inline-block;
+	display: block;
 	overflow: hidden;
-	width: 0;
+	width: 100%;
 	height: 0;
+	scroll: none;
 }
 
-.yeti-wrapper {
-	position: absolute;
+.yeti-wrapper{
+	width: 100%;
+}
+
+.yeti-controls {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 50px;
 }
 
 .yetislider img {
 	float: left;
 }
 
-.yetislider .controls {
-	position: absolute;
-	top: -3em;
-	width: 100%;
-	z-index: 300;
-}
-
-#prevBtn {
+.yeti-controlBtn {
 	position: absolute;
 	display: block;
-	left: .5em;
-	top: 0;
 	width: 50px;
 	height: 50px;
-	padding: 0;
-	color: white;
-	text-indent: -9999px;
+	padding:0;
+	margin:0;
+	background-size:50px 50px;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	z-index: 202;
+}
+.yeti-controlBtn:after {
+	content: '';
+	width: 50px;
+	height: 50px;
+}
+
+/*.yeti-controlBtn:hover {
+	opacity: 1;
+}*/
+
+#prevBtn {
 	background: url('https://cdn1.iconfinder.com/data/icons/black-logistics-icons/256/Rounded_shift_left_arrow.png') center center no-repeat;
 	background-size:50px 50px;
-	opacity: 1;
-	transition: opacity 0.3s ease;
-	
+	left: 5px;
 }
 
 #nextBtn {
-	position: absolute;
-	display: block;
-	right: .5em;
-	top: 0;
-	width: 50px;
-	height: 50px;
-	padding: 0;
-	color: white;
-	text-indent: -9999px;
 	background: url('https://cdn1.iconfinder.com/data/icons/black-logistics-icons/256/Rounded_shift_right_arrow.png') center center no-repeat;
 	background-size:50px 50px;
-	opacity: 1;
-	transition: opacity 0.3s ease;
-	
+	right: 5px;
 }
