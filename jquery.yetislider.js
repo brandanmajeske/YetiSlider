@@ -13,7 +13,7 @@
 			'autoscroll': true,
 			'touch': true,
 			'fade': false,
-			'speed': 'super-slow', // fast, medium, slow, default is super-slow
+			'speed': 'slow', // fast, medium, slow, default is super-slow
 			'transitionSpeed': 'fast'
 	    };
 	    // extend options with the default settings
@@ -30,6 +30,7 @@
 		//set size of the slider viewer
 		var viewer = $('.yetislider'),
 			viewerWidth = viewer.width(),
+			viewerParentWidth = viewer.parent().width(),
 			winWidth = $(window).width(),
 			images = viewer.find('img'),
 			height = [],
@@ -38,8 +39,7 @@
 			biggestHeight = null;
 
 		// update options
-	    var counter = 1,
-			numImg = images.length,
+	    var numImg = images.length,
 			interval = options.interval,
 			leftPos = viewer.scrollLeft();
 
@@ -64,16 +64,16 @@
 			switch(transitionSpeed)
 			{
 				case 'fast':
-				  	speed = 100; // 6 sec
+				  	t_speed = 100; // 6 sec
 				  	break;
 				case 'medium':
-				  	speed = 500; // 8 sec
+				  	t_speed = 500; // 8 sec
 				  	break;
 				case 'slow':
-					speed = 1000; // 10 sec
+					t_speed = 1000; // 10 sec
 					break;
 				default:
-				  	speed = 200; // 12 sec
+				  	t_speed = 200; // 12 sec
 				};
 		
 		(function initSlider(){
@@ -147,20 +147,33 @@
    			 			
    			 			viewer.css({'height': biggestHeight, 'width': viewerParentWidth});
    			 			viewerControls.css({'top': (biggestHeight/2)-25});
+   			 			
 
-   			 			console.log(biggestWidth);
+   			 			if(options.fade === true){
+   			 				viewer.stop().animate({opacity: 0, scrollLeft: 0}, 0).animate({opacity: 1},1000);	
+   			 			} else {
+   			 				
+   			 				viewer.stop().animate({opacity: 0, scrollLeft: 0}, 0).animate({opacity: 1},500);	
+   			 				leftPos = 0;
+   			 			}
+   			 			if(options.autoscroll){
+							clearInterval(timer);
+							timer = setInterval(autoScrollStart, speed);
+						}
 
- 						
+   			 			return biggestWidth;	
    			 	});
 
 				// set up controls for previous button
 				prevBtn.on('click', function(e){
-
+					
+					
 					if(leftPos === 0) {
 						return false;
 					}
 
 					e.preventDefault();
+
 
 					// Do something different if fade option is true
 					if(options.fade === true){
@@ -179,8 +192,9 @@
 						}
 					}
 
-					if(leftPos <= viewerWrapper.width() - biggestWidth){
+					if(leftPos <= (viewerWrapper.width() - biggestWidth)){
 						nextBtn.css({'opacity': 1, 'cursor': 'auto'});
+						
 					}
 						
 					// if Fade option is true
@@ -192,10 +206,12 @@
 				
 				// set up controlers for next btn
 				nextBtn.on('click', function(e){
+					console.log(biggestWidth, viewerWrapper.width());
+					
 					e.preventDefault();
 
 
-					if(leftPos === viewerWrapper.width() - biggestWidth) {
+					if(leftPos === viewerWrapper.width() - (biggestWidth)) {
 						return false;
 					}
 					
@@ -203,16 +219,15 @@
 					if(options.fade === true){
 						
 						viewer.animate({scrollLeft: leftPos + biggestWidth}, 0);
-					
+						
 					} else {
 
 						viewer.animate({scrollLeft: leftPos + biggestWidth}, transitionSpeed);
 					
 					}
 
-					if(leftPos <= viewerWrapper.width() - (biggestWidth*2)){
-						leftPos += biggestWidth;
-						
+					if(leftPos <= (viewerWrapper.width() - (biggestWidth*2))){
+						leftPos += biggestWidth;	
 					} else {
 						leftPos = (viewerWrapper.width() - biggestWidth);
 					}
@@ -256,7 +271,7 @@
 					function autoScrollStart(){
 							
 							// advance slider and 
-							if(counter < numImg || leftPos < viewerWrapper.width() - biggestWidth){
+							if(leftPos < viewerWrapper.width() - biggestWidth){
 								
 								if(options.fade === true){
 									//viewer.animate({opacity: 0, scrollLeft: leftPos + biggestWidth}, 0).animate({opacity: 1},1000);
@@ -266,7 +281,7 @@
 								}
 								
 								leftPos += biggestWidth;
-								counter += 1;
+								
 
 								
 							} else {
@@ -280,7 +295,7 @@
 								}
 								
 								leftPos = 0;
-								counter = 0;
+							
 							}
 					};
 
@@ -298,14 +313,18 @@
 					var touchMe = $('.touchme'),
 						direction = null;
 
-					touchMe.css({'display':'block', 'height': '2em', 'background-color':'pink'});
+					touchMe.css({'display':'block', 'height': '2em', 'background-color':'grey'});
 
 					viewer.on('touchstart', function(e){
 
 						e.preventDefault();
-
+						touchMe.css({'background-color':'blue'});
 						lastPosition = e.originalEvent.touches[0].pageX;
-						touchMe.html(lastPosition);
+						touchMe.html('last position: ' + lastPosition);
+
+						if(options.autoscroll){
+							clearInterval(timer);
+						}
 					
 					});
 
@@ -319,11 +338,13 @@
 
 							direction = 'right';
 							touchMe.html('right');
+							touchMe.css({'background-color':'green'});
 
 						} else {
 
 							direction = 'left';
 							touchMe.html('left');
+							touchMe.css({'background-color':'yellow'});
 						}
 						lastPosition = currentPosition;
 						if(options.autoscroll){
@@ -333,16 +354,30 @@
 
 					viewer.on('touchend', function(e){
 						e.preventDefault();
-
+						touchMe.css({'background-color':'grey'});
 						if(direction === 'right'){
+							if(options.fade === true){
+								if(leftPos <= viewerWrapper.width() - (biggestWidth*2)){
+								viewer.stop().animate({opacity: 0, scrollLeft: leftPos + biggestWidth}, 0).animate({opacity: 1},1000);
+								}
+							} else {
 							viewer.animate({scrollLeft: leftPos + biggestWidth}, 400);
-							leftPos += biggestWidth;
+							}
+
+							if(leftPos <= viewerWrapper.width() - (biggestWidth*2)){
+								leftPos += biggestWidth;
+							}
+							
 						}
 
 						if(direction === 'left'){
-							// Move Left 
+							if(options.fade === true){
+								if(leftPos !== 0){
+								viewer.stop().animate({opacity: 0, scrollLeft: leftPos - biggestWidth}, 0).animate({opacity: 1},1000);
+								}
+							} else {
 							viewer.animate({scrollLeft: leftPos - biggestWidth}, 400);
-							
+							}
 							if(leftPos > 0){
 								leftPos -= biggestWidth;
 							}
@@ -404,7 +439,7 @@
 							}
 
 							if(options.autoscroll === true){
-								console.log(options.autoscroll);
+								
 								clearInterval(timer);
 							}
 

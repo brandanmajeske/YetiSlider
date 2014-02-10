@@ -20,19 +20,19 @@
 	<img src="http://lorempixel.com/1000/400/cats/" alt="lorempixel image" />
 </div>
 
-<div class="touchme"></div>
-
+<p>Version 0.0.1</p>
+<div class="touchme">Debug Touch</div>
 </div>
-
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="jquery.yetislider.js"></script>
 <script type="text/javascript">
 
 	var options = {
-		'autoscroll': false,
+		'autoscroll': true,
+		'touch':true,
 		'fade': false,
-		'speed': 'fast', // fast, medium, slow*/
-		'transitionSpeed': 'fast'
+		'speed': 'medium', // fast, medium, slow */
+		'transitionSpeed': 'slow' // fast, medium, slow */
 	}
 
 	$('.yetislider').yetislider(options);
